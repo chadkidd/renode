@@ -5,6 +5,11 @@ UserButton: Miscellaneous.Button @ gpioPortA
 
 UserLED: Miscellaneous.LED @ gpioPortD
 
+Accelerometer: Sensors.LIS3DSH_Accelerometer @ spi1
+
 gpioPortD:
     12 -> UserLED@0
+
+gpioPortE:
+    3 -> Accelerometer@0
    
