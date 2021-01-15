@@ -1,0 +1,36 @@
+nvic: IRQControllers.NVIC @ sysbus 0xE000E000
+    -> cpu@0
+
+cpu: CPU.CortexM @ sysbus
+    cpuType: "cortex-m0"
+    nvic: nvic
+
+qspiflash: Memory.MappedMemory @ sysbus 0x8000000
+    size: 0x4000000
+
+otpc: Miscellaneous.DA1468x_OTPC @sysbus 0x7F40000
+
+rom: Memory.MappedMemory @ sysbus 0x7F00000
+    size: 0x40000
+
+systemram: Memory.MappedMemory @ sysbus 0x7FC0000
+    size: 0x20000
+
+cacheram: Memory.MappedMemory @ sysbus 0x7FE0000
+    size: 0x20000
+
+crg: Miscellaneous.DA1468x_CRG @sysbus 0x50000000
+
+wdog: Timers.DA1468x_Watchdog @sysbus 0x50003100
+    frequency: 5859   //datasheet says timer decrements every 10.24msec
+
+chiptest1_stepping: Python.PythonPeripheral @ sysbus 0x5000320A
+    size: 0x1
+    initable: true
+    script: "request.value = 0x1"
+
+gpreg: Miscellaneous.DA1468x_GPREG @ sysbus 0x50003300
+
+sysbus:
+    init:
+        ApplySVD @/Users/chadkidd/development/renode-development-files/DA14683.svd
