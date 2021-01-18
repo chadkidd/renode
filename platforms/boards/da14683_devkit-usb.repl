@@ -1,0 +1,11 @@
+using "platforms/cpus/da1468x.repl"
+
+userLedRed: Miscellaneous.LED @ gpio
+    invert: true
+
+switch1: Miscellaneous.Button @ gpio
+    -> gpio@22
+
+gpio:
+    10 -> userLedRed@0
+   

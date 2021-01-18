@@ -8,7 +8,7 @@ cpu: CPU.CortexM @ sysbus
 qspiflash: Memory.MappedMemory @ sysbus 0x8000000
     size: 0x4000000
 
-otpc: Miscellaneous.DA1468x_OTPC @sysbus 0x7F40000
+otpc: Miscellaneous.DA1468x_OTPC @ sysbus 0x7F40000
 
 rom: Memory.MappedMemory @ sysbus 0x7F00000
     size: 0x40000
@@ -19,9 +19,11 @@ systemram: Memory.MappedMemory @ sysbus 0x7FC0000
 cacheram: Memory.MappedMemory @ sysbus 0x7FE0000
     size: 0x20000
 
-crg: Miscellaneous.DA1468x_CRG @sysbus 0x50000000
+crg: Miscellaneous.DA1468x_CRG @ sysbus 0x50000000
 
-wdog: Timers.DA1468x_Watchdog @sysbus 0x50003100
+gpio: GPIOPort.DA1468x_GPIO @ sysbus 0x50003000
+
+wdog: Timers.DA1468x_Watchdog @ sysbus 0x50003100
     frequency: 5859   //datasheet says timer decrements every 10.24msec
 
 chiptest1_stepping: Python.PythonPeripheral @ sysbus 0x5000320A
