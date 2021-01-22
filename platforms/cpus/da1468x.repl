@@ -26,15 +26,13 @@ timer1: Timers.DA1468x_Timer1 @ sysbus 0x50000200
 
 uart1: UART.DA1468x_UART @ sysbus 0x50001000
 
+adc: Analog.DA1468x_ADC @ sysbus 0x50001900
+    initialResult: 0x8000
+
 crg_clk_per: Python.PythonPeripheral @ sysbus 0x50001C04
     size: 0x2
     initable: true
     script: "request.value = 0x1"
-
-adc_result: Python.PythonPeripheral @ sysbus 0x5000190C     //this value gets the initial adc calibration to pass
-    size: 0x2
-    initable: true
-    script: "request.value = 0x8000"
 
 gpio: GPIOPort.DA1468x_GPIO @ sysbus 0x50003000
 
