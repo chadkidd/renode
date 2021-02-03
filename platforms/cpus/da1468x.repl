@@ -5,8 +5,8 @@ cpu: CPU.CortexM @ sysbus
     cpuType: "cortex-m0"
     nvic: nvic
 
-qspiflash: Memory.MappedMemory @ sysbus 0x8000000
-    size: 0x4000000
+remapped: Memory.MappedMemory @ sysbus 0x0
+    size: 0x7E00000
 
 otpc: Miscellaneous.DA1468x_OTPC @ sysbus 0x7F40000
 
@@ -18,6 +18,31 @@ systemram: Memory.MappedMemory @ sysbus 0x7FC0000
 
 cacheram: Memory.MappedMemory @ sysbus 0x7FE0000
     size: 0x20000
+
+qspiflash: Memory.MappedMemory @ sysbus 0x8000000
+    size: 0x3F00000
+
+qspic: SPI.DA1468x_QSPI @ sysbus 0xC000000
+
+otp_tcs_addrs: Python.PythonPeripheral @ sysbus 0x7F8EA78
+    size: 0x4
+    initable: true
+    script: "request.value = 0x50000028"
+
+otp_tcs_addrs_invert: Python.PythonPeripheral @ sysbus 0x7F8EA7C
+    size: 0x4
+    initable: true
+    script: "request.value = 0xAFFFFFD7"
+
+otp_tcs_value: Python.PythonPeripheral @ sysbus 0x7F8EA80
+    size: 0x4
+    initable: true
+    script: "request.value = 0x00006A71"
+
+otp_tcs_value_invert: Python.PythonPeripheral @ sysbus 0x7F8EA84
+    size: 0x4
+    initable: true
+    script: "request.value = 0xFFFF958E"
 
 crg: Miscellaneous.DA1468x_CRG @ sysbus 0x50000000
 
