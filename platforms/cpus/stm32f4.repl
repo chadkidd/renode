@@ -87,6 +87,11 @@ rtc: Timers.STM32F4_RTC @ sysbus 0x40002800
 rcc: Miscellaneous.STM32F4_RCC @ sysbus 0x40023800
     rtcPeripheral: rtc
 
+flashacr: Python.PythonPeripheral @ sysbus 0x40023C00
+    size: 0x4
+    initable: true
+    script: "request.value = 0x5"
+
 timer1: Timers.STM32_Timer @ sysbus <0x40010000, +0x400>
     frequency: 10000000
     initialLimit: 0xFFFF

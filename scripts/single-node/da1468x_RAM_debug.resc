@@ -1,0 +1,19 @@
+:name: da1468x_RAM_debug.resc
+:description: This script runs da1468x compiled for Ram and starts up the debugger.
+
+using sysbus
+
+mach create
+machine LoadPlatformDescription @/Users/chadkidd/development/renode/platforms/boards/da14683_devkit-usb.repl
+
+$bin?=@/Users/chadkidd/BLE_Projects/DA1468x_DA15xxx_SDK_1.0.14.1081/projects/dk_apps/templates/freertos_retarget/DA14683-00-Debug_RAM/freertos_retarget.elf
+
+sysbus LoadELF $bin
+
+showAnalyzer sysbus.uart1
+logLevel -1 sysbus.qspic
+logLevel -1 sysbus.timer1
+sysbus.cpu ExecutionMode SingleStep
+sysbus.cpu LogFunctionNames False
+
+machine StartGdbServer 3333

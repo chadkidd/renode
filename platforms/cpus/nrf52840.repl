@@ -19,8 +19,15 @@ rtc0: Timers.NRF52840_RTC @ sysbus 0x4000B000
 rtc1: Timers.NRF52840_RTC @ sysbus 0x40011000
     -> nvic@17
 
+
+wdtstatus: Python.PythonPeripheral @ sysbus 0x40010400
+    size: 0x4
+    initable: true
+    script: "request.value = 0x0"
+
 rtc2: Timers.NRF52840_RTC @ sysbus 0x40024000
     -> nvic@36
+
 
 flash: Memory.MappedMemory @ sysbus 0x0
     size: 0x20000000

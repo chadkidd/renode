@@ -1,0 +1,17 @@
+:name: NRF52840_devkit
+:description: This script runs Shell demo on NRF52840.
+
+using sysbus
+
+mach create
+machine LoadPlatformDescription @platforms/cpus/nrf52840.repl
+
+$bin?=@/Users/chadkidd/BLE_Projects/blinky_freertos_renode/Output/Debug/Exe/blinky_FreeRTOS_renode_pca10056.elf
+
+showAnalyzer uart0
+
+macro reset
+"""
+    sysbus LoadELF $bin
+"""
+runMacro $reset

@@ -1,0 +1,25 @@
+:name: da1468x_QSPI_debug.resc
+:description: This script runs da1468x compiled for QSPI and starts up the debugger.
+
+using sysbus
+
+mach create
+:sysbus Redirect 0x0 0x8000000 0x4000000
+machine LoadPlatformDescription @/Users/chadkidd/development/renode/platforms/boards/da14683_devkit-usb.repl
+
+$bin?=@/Users/chadkidd/BLE_Projects/DA1468x_DA15xxx_SDK_1.0.14.1081/projects/dk_apps/templates/freertos_retarget/DA14683-00-Release_QSPI/freertos_retarget.elf
+
+macro reset
+"""
+    sysbus LoadELF $bin
+    sysbus.cpu SP 0x7FE0000
+    sysbus.cpu PC 0x8000201
+    sysbus.cpu VectorTableOffset 0x8000000
+    
+    logLevel -1 sysbus.qspic
+    logLevel -1 sysbus.timer1
+    showAnalyzer sysbus.uart1
+    sysbus.cpu LogFunctionNames False
+
+"""
+runMacro $reset
