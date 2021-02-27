@@ -1,5 +1,5 @@
 ﻿//
-// Copyright (c) 2010-2019 Antmicro
+// Copyright (c) 2010-2021 Antmicro
 //
 //  This file is licensed under the MIT License.
 //  Full license text is available in 'licenses/MIT.txt'.
@@ -19,6 +19,8 @@ namespace Antmicro.Renode.Plugins.VerilatorPlugin.Connection.Protocols
         Disconnect,
         Error,
         OK,
-        Handshake = 10 //all custom action type numbers must not fall in this range
+        Handshake,
+        PushData,
+        GetData = 12 //all custom action type numbers must not fall in this range
     }
 }

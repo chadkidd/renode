@@ -66,7 +66,7 @@ Renode requires Mono >= 5.20 (Linux, macOS) or .NET >= 4.7 (Windows).
 Other dependencies (Linux only)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-On Ubuntu 16.04, you can install the remaining dependencies with the following command::
+On Ubuntu 20.04, you can install the remaining dependencies with the following command::
 
    sudo apt-get install policykit-1 libgtk2.0-0 screen uml-utilities gtk-sharp2 libc6-dev gcc python3 python3-pip libzmq5
 
@@ -81,7 +81,7 @@ Go to `the releases section <https://github.com/renode/renode/releases/latest>`_
    :delim: |
 
    **Linux** | Install Renode as normal with your preferred package manager using the provided ``*.deb``, ``*.rpm`` or ``*.pkg.tar.xz`` packages.
-   **macOS** | Use the provided ``*.dmg`` as normal. Additionally, to be able to run Renode from the command line on macOS, create an appropriate alias. If you're using Bash, you can do it by adding ``alias renode="mono /Applications/Renode.app/Contents/MacOS/bin/Renode.exe"`` to your ``.bashrc`` file.
+   **macOS** | Use the provided ``*.dmg`` as normal. Additionally, to be able to run Renode from the command line on macOS, create an appropriate alias. If you're using Bash, you can do it by adding ``alias renode='mono /Applications/Renode.app/Contents/MacOS/bin/Renode.exe'`` to your ``.bashrc`` file.
    **Windows** | Install Renode from the provided ``*.msi`` file. The installer will allow you to add icons to your Desktop and/or Start Menu and an entry to your PATH.
 
 Additional prerequisites (for Robot framework testing)
@@ -92,7 +92,7 @@ This requires you to install Python 3 (on Windows, you will also need Cygwin - s
 
 Once you have Python 3 and ``pip``, install some additional modules::
 
-    python3 -m pip install -r tools/requirements.txt
+    python3 -m pip install -r tests/requirements.txt
 
 Building from source (advanced)
 +++++++++++++++++++++++++++++++
