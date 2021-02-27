@@ -1,5 +1,5 @@
 ﻿//
-// Copyright (c) 2010-2020 Antmicro
+// Copyright (c) 2010-2021 Antmicro
 //
 // This file is licensed under the MIT License.
 // Full license text is available in 'licenses/MIT.txt'.
@@ -26,6 +26,7 @@ namespace Antmicro.Renode.Peripherals.Verilated
     {
         public BaseDoubleWordVerilatedPeripheral(Machine machine, long frequency, string simulationFilePath = null, ulong limitBuffer = LimitBuffer, double timeout = DefaultTimeout)
         {
+            this.machine = machine;
             mainSocket = new CommunicationChannel(timeout);
             asyncEventsSocket = new CommunicationChannel(timeout);
             receiveThread = new Thread(ReceiveLoop)
@@ -137,7 +138,7 @@ namespace Antmicro.Renode.Peripherals.Verilated
         {
             if(!mainSocket.TrySend(new ProtocolMessage(actionId, offset, value)))
             {
-                AbortAndLogError("Connection timeout!");
+                AbortAndLogError("Send timeout!");
             }
         }
 
@@ -153,6 +154,15 @@ namespace Antmicro.Renode.Peripherals.Verilated
                     break;
                 case ActionType.Interrupt:
                     HandleInterrupt(message);
+                    break;
+                case ActionType.PushData:
+                    this.Log(LogLevel.Noisy, "Writing data: 0x{0:X} to address: 0x{1:X}", message.Data, message.Address);
+                    machine.SystemBus.WriteDoubleWord(message.Address, (uint)message.Data);
+                    break;
+                case ActionType.GetData:
+                    this.Log(LogLevel.Noisy, "Requested data from address: 0x{0:X}", message.Address);
+                    var data = machine.SystemBus.ReadDoubleWord(message.Address);
+                    Send(ActionType.WriteToBus, 0, data);
                     break;
             }
         }
@@ -218,7 +228,7 @@ namespace Antmicro.Renode.Peripherals.Verilated
         {
             if(!mainSocket.TryReceive(out var message))
             {
-                AbortAndLogError("Connection timeout!");
+                AbortAndLogError("Receive timeout!");
             }
 
             return message;
@@ -240,6 +250,7 @@ namespace Antmicro.Renode.Peripherals.Verilated
         private readonly CommunicationChannel mainSocket;
         private readonly CommunicationChannel asyncEventsSocket;
         private readonly Thread receiveThread;
+        private readonly Machine machine;
 
         private const string LimitTimerName = "VerilatorIntegrationClock";
     }

@@ -7,6 +7,7 @@ Resource                      ${RENODEKEYWORDS}
 
 *** Test Cases ***
 Should Handle Button Press
+    [Tags]                  skipped
     Execute Command         mach create
     Execute Command         machine LoadPlatformDescription @platforms/cpus/stm32f103.repl
     Execute Command         machine LoadPlatformDescriptionFromString "button: Miscellaneous.Button @ gpioPortC 13 { IRQ -> gpioPortC@13 }"
@@ -17,11 +18,11 @@ Should Handle Button Press
     Start Emulation
 
     Wait For Line On Uart   Press the user defined button on the board
-    Test If Uart Is Idle    3
+    Test If Uart Is Idle    1
     Execute Command         sysbus.gpioPortC.button Press
-    Test If Uart Is Idle    3
+    Test If Uart Is Idle    1
     Execute Command         sysbus.gpioPortC.button Release
     Wait For Line On Uart   Button pressed
-    Test If Uart Is Idle    3
+    Test If Uart Is Idle    1
     Execute Command         sysbus.gpioPortC.button PressAndRelease
     Wait For Line On Uart   Button pressed
