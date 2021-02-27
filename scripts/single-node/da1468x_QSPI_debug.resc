@@ -6,9 +6,15 @@ using sysbus
 mach create
 machine LoadPlatformDescription @/Users/chadkidd/development/renode/platforms/boards/da14683_devkit-usb.repl
 
-$bin?=@/Users/chadkidd/BLE_Projects/DA1468x_DA15xxx_SDK_1.0.14.1081/projects/dk_apps/templates/freertos_retarget/DA14683-00-Debug_QSPI/freertos_retarget.elf
+$elf?=@/Users/chadkidd/BLE_Projects/DA1468x_DA15xxx_SDK_1.0.14.1081/projects/dk_apps/templates/freertos_retarget/DA14683-00-Debug_QSPI/freertos_retarget.elf
 
-sysbus LoadELF $bin
+$bin?=@/Users/chadkidd/BLE_Projects/DA1468x_DA15xxx_SDK_1.0.14.1081/projects/dk_apps/templates/freertos_retarget/DA14683-00-Debug_QSPI/freertos_retarget.bin
+
+sysbus LoadBinary @/Users/chadkidd/development/renode-development-files/DA14683_ROM.bin 0x7F00000
+
+sysbus LoadELF $elf
+
+sysbus LoadBinary $bin 0x8000000
 
 sysbus.cpu SP 0x7FE0000
 sysbus.cpu PC 0x8000201

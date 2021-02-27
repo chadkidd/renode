@@ -1,4 +1,4 @@
-:name: da1468x_QSPI_debug.resc
+:name: da1468x_RAM_debug.resc
 :description: This script runs da1468x compiled for Ram and starts up the debugger.
 
 using sysbus
@@ -9,8 +9,6 @@ machine LoadPlatformDescription @/Users/chadkidd/development/renode/platforms/bo
 $bin?=@/Users/chadkidd/BLE_Projects/DA1468x_DA15xxx_SDK_1.0.14.1081/projects/dk_apps/templates/freertos_retarget/DA14683-00-Debug_RAM/freertos_retarget.elf
 
 sysbus LoadELF $bin
-
-logLevel -1 sysbus.qspic
 
 showAnalyzer sysbus.uart1
 logLevel -1 sysbus.qspic

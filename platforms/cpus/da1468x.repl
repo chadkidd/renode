@@ -6,11 +6,14 @@ cpu: CPU.CortexM @ sysbus
     nvic: nvic
 
 remapped: Memory.MappedMemory @ sysbus 0x0
-    size: 0x7E00000
+    size: 0x7EF0000
 
 otpc: Miscellaneous.DA1468x_OTPC @ sysbus 0x7F40000
 
 rom: Memory.MappedMemory @ sysbus 0x7F00000
+    size: 0x40000
+
+otp: Memory.MappedMemory @ sysbus 0x7F80000
     size: 0x40000
 
 systemram: Memory.MappedMemory @ sysbus 0x7FC0000
@@ -24,40 +27,56 @@ qspiflash: Memory.MappedMemory @ sysbus 0x8000000
 
 qspic: SPI.DA1468x_QSPI @ sysbus 0xC000000
 
-otp_tcs_addrs: Python.PythonPeripheral @ sysbus 0x7F8EA78
-    size: 0x4
-    initable: true
-    script: "request.value = 0x50000028"
+//otp_tcs_addrs: Python.PythonPeripheral @ sysbus 0x7F8EA78
+//    size: 0x4
+//    initable: true
+//    script: "request.value = 0x50000028"
 
-otp_tcs_addrs_invert: Python.PythonPeripheral @ sysbus 0x7F8EA7C
-    size: 0x4
-    initable: true
-    script: "request.value = 0xAFFFFFD7"
+//otp_tcs_addrs_invert: Python.PythonPeripheral @ sysbus 0x7F8EA7C
+//    size: 0x4
+//    initable: true
+//    script: "request.value = 0xAFFFFFD7"
 
-otp_tcs_value: Python.PythonPeripheral @ sysbus 0x7F8EA80
-    size: 0x4
-    initable: true
-    script: "request.value = 0x00006A71"
+//otp_tcs_value: Python.PythonPeripheral @ sysbus 0x7F8EA80
+//    size: 0x4
+//    initable: true
+//    script: "request.value = 0x00006A71"
 
-otp_tcs_value_invert: Python.PythonPeripheral @ sysbus 0x7F8EA84
-    size: 0x4
-    initable: true
-    script: "request.value = 0xFFFF958E"
+//otp_tcs_value_invert: Python.PythonPeripheral @ sysbus 0x7F8EA84
+//    size: 0x4
+//    initable: true
+//    script: "request.value = 0xFFFF958E"
 
 crg: Miscellaneous.DA1468x_CRG @ sysbus 0x50000000
+    Xtal16Interrupt -> nvic@30
+    VbusRdyInterrupt -> nvic@25
 
-timer1: Timers.DA1468x_Timer1 @ sysbus 0x50000200
+wkup: Miscellaneous.DA1468x_WKUP @ sysbus 0x50000100
+
+timer1: Timers.DA14681_Timer1 @ sysbus 0x50000200
     -> nvic@19
 
 uart1: UART.DA1468x_UART @ sysbus 0x50001000
+    -> nvic@8
+
+spi2_ctrl_reg: Python.PythonPeripheral @ sysbus 0x50001300
+    size: 0x2
+    initable: true
+    script: "request.value = 0x2000"
+
+usb: USB.DA1468x_USB @ sysbus 0x50001800
 
 adc: Analog.DA1468x_ADC @ sysbus 0x50001900
     initialResult: 0x8000
+
+anamisc: Miscellaneous.DA1468x_ANAMISC @ sysbus 0x50001B08
 
 crg_clk_per: Python.PythonPeripheral @ sysbus 0x50001C04
     size: 0x2
     initable: true
     script: "request.value = 0x1"
+
+rfcu: Miscellaneous.DA1468x_RFCU @ sysbus 0x50002000
 
 gpio: GPIOPort.DA1468x_GPIO @ sysbus 0x50003000
 
@@ -71,6 +90,8 @@ chiptest1_stepping: Python.PythonPeripheral @ sysbus 0x5000320A
 
 gpreg: Miscellaneous.DA1468x_GPREG @ sysbus 0x50003300
 
+dma: DMA.DA1468x_DMA @ sysbus 0x50003500
+
 sysbus:
     init:
-        ApplySVD @/Users/chadkidd/development/renode-development-files/DA14683.svd
+        ApplySVD @/Users/chadkidd/development/renode-development-files/DA14681.svd
