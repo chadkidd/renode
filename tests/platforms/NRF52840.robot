@@ -86,9 +86,11 @@ Run ZephyrRTOS Shell
 
 *** Test Cases ***
 Should Run ZephyrRTOS Shell On UART
+    [Tags]   skipped
     Run ZephyrRTOS Shell      ${NO_DMA}  zephyr_shell_nrf52840.elf-s_1110556-9653ab7fffe1427c50fa6b837e55edab38925681
 
 Should Run ZephyrRTOS Shell On UARTE
+    [Tags]   skipped
     Run ZephyrRTOS Shell      ${DMA}     renode-nrf52840-zephyr_shell_module.elf-gf8d05cf-s_1310072-c00fbffd6b65c6238877c4fe52e8228c2a38bf1f
 
 
@@ -209,4 +211,15 @@ Should Echo I2S Audio
     ${output_file_content}=   Get Binary File  ${output_file}
 
     Should Be Equal           ${input_file_content}  ${output_file_content}
+
+Should Detect Yes Pattern
+    [Tags]                    non_critical
+    Create Machine            ${STANDARD}    nrf52840--tflite-micro_speech.elf-s_7172308-9ab5781883d7af2582d7fea09b14352628da9839
+
+    Execute Command           sysbus.pdm SetInputFile ${URI}/audio_yes_1s.s16le.pcm-s_32000-b69f5518615516f80ae0082fe9b5a5d29ffebce8
+
+    Create Terminal Tester    ${UART}
+    Start Emulation
+
+    Wait For Line On Uart     Heard yes
 

@@ -20,10 +20,11 @@ rm -rf $DESTINATION/*
 
 mkdir $DESTINATION/{tests,tools}
 cp $RENODE_ROOT_DIR/test.sh $DESTINATION
-cp -r $RENODE_ROOT_DIR/tests/{robot_tests_provider,run_tests,tests_engine,robot_output_formatter}.py $DESTINATION/tests
-cp -r $RENODE_ROOT_DIR/src/Renode/RobotFrameworkEngine/*.{py,robot} $DESTINATION/tests
+cp $RENODE_ROOT_DIR/tests/{robot_tests_provider,run_tests,tests_engine,robot_output_formatter}.py $DESTINATION/tests
+cp $RENODE_ROOT_DIR/tests/requirements.txt $DESTINATION/tests
+cp $RENODE_ROOT_DIR/src/Renode/RobotFrameworkEngine/*.{py,robot} $DESTINATION/tests
 cp $RENODE_ROOT_DIR/lib/resources/styles/robot.css $DESTINATION/tests/robot.css
-cp -r $RENODE_ROOT_DIR/tools/{common.sh,requirements.txt} $DESTINATION/tests
+cp $RENODE_ROOT_DIR/tools/common.sh $DESTINATION/tests
 cp -r $RENODE_ROOT_DIR/tools/metrics_analyzer $DESTINATION/tools
 
 sed -i '/nunit/d' $DESTINATION/tests/run_tests.py
@@ -54,6 +55,20 @@ sed -e '/<\/configuration>/d' -i $CONFIG_FILE
 # this seems to be necessary, otherwise Renode crashes on opening tlib.so in docker
 echo '<dllmap dll="i:dl">' >> $CONFIG_FILE
 echo '  <dllentry dll="__Internal" name="dlopen" target="dlopen"/>' >> $CONFIG_FILE
+echo '</dllmap>' >> $CONFIG_FILE
+
+AWK_COMMANDS='
+/--- REMAPPED SYMBOLS SECTION STARTS ---/ { flag = 1; next }
+/--- REMAPPED SYMBOLS SECTION ENDS ---/   { flag = 0; }
+flag                                      { gsub(/\(\);/, "", $0); print }
+'
+
+# remap functions from MonoPosixHelper to __Internal
+echo '<dllmap dll="i:MonoPosixHelper">' >> $CONFIG_FILE
+FUNCTIONS=`awk "$AWK_COMMANDS" $THIS_DIR/linux_portable/additional.c`
+for F in $FUNCTIONS ; do
+    echo "  <dllentry dll=\"__Internal\" name=\"$F\" target=\"$F\"/>" >> $CONFIG_FILE
+done
 echo '</dllmap>' >> $CONFIG_FILE
 
 echo '
@@ -135,12 +150,15 @@ gcc \
     $WRAPPER_SOURCE_FILE  \
     $WORKDIR/temp.s  \
     -I/usr/include/mono-2.0  \
-    -lm  \
     -ldl  \
-    -lz `pkg-config --libs-only-L mono-2`  \
     -Wl,-Bstatic  \
     -lmono-2.0  \
-    -Wl,-Bdynamic `pkg-config --libs-only-l mono-2 | sed -e "s/\-lmono-2.0 //"`  \
+    -lMonoPosixHelper \
+    -lz \
+    -lrt \
+    -lbsd \
+    -Wl,-Bdynamic `pkg-config --libs-only-l mono-2 | sed -e "s/\-lmono-2.0 //" | sed -e "s/\-lm//" | sed -e "s/\-lrt //"`  \
+    $RENODE_ROOT_DIR/lib/resources/libraries/libopenlibm-Linux.a  \
     -static-libgcc \
     -o $DESTINATION/renode_bundled
 
@@ -152,7 +170,6 @@ cp $RENODE_ROOT_DIR/.renode-root $DESTINATION
 cp -r $RENODE_ROOT_DIR/scripts $DESTINATION
 cp -r $RENODE_ROOT_DIR/platforms $DESTINATION
 
-cp `find_file libMonoPosixHelper.so` $DESTINATION
 cp `find_file libmono-btls-shared.so` $DESTINATION
 
 cp `find_file libglibsharpglue-2.so` $DESTINATION

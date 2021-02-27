@@ -1,11 +1,14 @@
 //
-// Copyright (c) 2010-2019 Antmicro
+// Copyright (c) 2010-2021 Antmicro
 //
 // This file is licensed under the MIT License.
 // Full license text is available in 'licenses/MIT.txt'.
 //
+#ifndef Renode_H
+#define Renode_H
 #include <zmq.hpp>
 #include <string>
+#include <vector>
 #include "buses/bus.h"
 
 // Protocol must be in sync with Renode's ProtocolMessage
@@ -38,7 +41,9 @@ enum Action
   disconnect = 7,
   error = 8,
   ok = 9,
-  handshake = 10
+  handshake = 10,
+  pushData = 11,
+  getData = 12
 };
 
 class RenodeAgent
@@ -47,15 +52,19 @@ public:
   RenodeAgent(BaseBus* bus);
   void simulate(int receiverPort, int senderPort);
   void log(int logLevel, std::string message);
-
+  void addBus(BaseBus* bus);
+  virtual void pushToAgent(unsigned long addr, unsigned long value);
+  virtual unsigned long requestFromAgent(unsigned long addr);
 protected:
+  virtual void tick(bool countEnable, unsigned long steps);
+  virtual void reset();
   virtual void writeToBus(unsigned long addr, unsigned long value);
   virtual void readFromBus(unsigned long addr);
   void mainSocketSend(Protocol message);
   void senderSocketSend(Protocol request);
   void senderSocketSend(std::string text);
   virtual void handleCustomRequestType(Protocol* message);
-  BaseBus* bus;
+  std::vector<BaseBus*> interfaces;
 
 private:
   zmq::context_t context;
@@ -65,3 +74,4 @@ private:
   void handshakeValid();
   struct Protocol* receive();
 };
+#endif
