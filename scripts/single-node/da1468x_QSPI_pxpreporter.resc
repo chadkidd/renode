@@ -1,0 +1,33 @@
+:name: da1468x_QSPI_debug.resc
+:description: This script runs da1468x compiled for QSPI and starts up the debugger.
+
+using sysbus
+
+mach create
+machine LoadPlatformDescription @/Users/chadkidd/development/renode/platforms/boards/da14683_devkit-usb.repl
+
+$elf?=@/Users/chadkidd/BLE_Projects/workspaceDialog/projects/dk_apps/demos/pxp_reporter/DA14683-00-Debug_QSPI/pxp_reporter.elf
+
+$bin?=@/Users/chadkidd/BLE_Projects/workspaceDialog/projects/dk_apps/demos/pxp_reporter/DA14683-00-Debug_QSPI/pxp_reporter.bin
+
+$partition?=@/Users/chadkidd/development/renode-development-files/DA14683_PartitionTable.bin
+
+sysbus LoadBinary @/Users/chadkidd/development/renode-development-files/DA14683_ROM.bin 0x7F00000
+
+sysbus LoadELF $elf
+
+sysbus LoadBinary $bin 0x8000000
+
+sysbus LoadBinary $partition 0x807F000
+
+sysbus.cpu SP 0x7FE0000
+sysbus.cpu PC 0x8000201
+sysbus.cpu VectorTableOffset 0x8000000
+
+logLevel -1 sysbus.qspic
+logLevel -1 sysbus.timer1
+showAnalyzer sysbus.uart1
+sysbus.cpu ExecutionMode SingleStep
+sysbus.cpu LogFunctionNames True
+
+machine StartGdbServer 3333
